@@ -8,11 +8,11 @@
         <version>4.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
-    <artifactId>kafka-uebung</artifactId>
+    <groupId>ch.bumfuzzle</groupId>
+    <artifactId>backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>kafka-uebung</name>
-    <description>Demo project for Spring Boot</description>
+    <name>backend</name>
+    <description>Backend for Bumfuzzle</description>
     <url/>
     <licenses>
         <license/>

@@ -3,6 +3,7 @@ package ch.bumfuzzle.websocket.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -14,13 +15,16 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-  private final Key key = Keys.secretKeyFor(io.jsonwebtoken.SignatureAlgorithm.HS256);
-  private final String base64Key = Base64.getEncoder().encodeToString(key.getEncoded());
+  @Value("${jwt.secret}")
+  private String jwtSecret;
+
+  @Value("${jwt.expiration}")
+  private long jwtExpiration;
 
   private SecretKey getKey() {
-    return Keys.hmacShaKeyFor(
-        base64Key.getBytes(StandardCharsets.UTF_8)
-    );
+    final String base64Key = Base64.getEncoder()
+        .encodeToString(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    return Keys.hmacShaKeyFor(base64Key.getBytes(StandardCharsets.UTF_8));
   }
 
   public boolean isValid(final String token) {
@@ -30,7 +34,7 @@ public class JwtService {
           .build()
           .parseSignedClaims(token);
       return true;
-    } catch (final Exception _) {
+    } catch (final Exception e) {
       return false;
     }
   }
@@ -52,7 +56,7 @@ public class JwtService {
     return Jwts.builder()
                .subject(username)
                .issuedAt(new Date(now))
-               .expiration(new Date(now + 1000 * 60 * 60)) // 1h
+               .expiration(new Date(now + jwtExpiration))
                .signWith(getKey())
                .compact();
   }

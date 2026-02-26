@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class DataLoader {
 
+    // TODO: REMOVE LATER
     @Bean
     public CommandLineRunner loadTestUser(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {

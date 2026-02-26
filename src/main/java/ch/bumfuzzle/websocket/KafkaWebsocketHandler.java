@@ -1,6 +1,7 @@
 package ch.bumfuzzle.websocket;
 
-import ch.bumfuzzle.entity.TestEntity;
+import ch.bumfuzzle.entity.Device;
+import ch.bumfuzzle.entity.SensorData;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
@@ -35,7 +36,7 @@ public class KafkaWebsocketHandler extends TextWebSocketHandler {
     sessions.remove(session);
   }
 
-  public void broadcast(final TestEntity payload) {
+  public void broadcast(final SensorData payload) {
     sessions.forEach(session -> {
       try {
         if (session.isOpen()) {

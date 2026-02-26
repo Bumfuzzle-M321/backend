@@ -1,7 +1,7 @@
 package ch.bumfuzzle.kafka;
 
-import ch.bumfuzzle.entity.TestEntity;
-import ch.bumfuzzle.repository.TestRepository;
+import ch.bumfuzzle.entity.SensorData;
+import ch.bumfuzzle.repository.SensorDataRepository;
 import ch.bumfuzzle.websocket.KafkaWebsocketHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -15,12 +15,12 @@ public class KafkaConsumer {
   private final ObjectMapper objectMapper;
 
   private final KafkaWebsocketHandler wsHandler;
-  private final TestRepository testRepository;
+  private final SensorDataRepository sensorDataRepository;
 
-  public KafkaConsumer(final ObjectMapper objectMapper, final KafkaWebsocketHandler wsHandler, final TestRepository testRepository) {
+  public KafkaConsumer(final ObjectMapper objectMapper, final KafkaWebsocketHandler wsHandler, final SensorDataRepository sensorDataRepository) {
     this.wsHandler = wsHandler;
     this.objectMapper = objectMapper;
-    this.testRepository = testRepository;
+    this.sensorDataRepository = sensorDataRepository;
   }
 
   @KafkaListener(
@@ -29,10 +29,10 @@ public class KafkaConsumer {
   )
   public void listen(final byte[] payload) {
     try {
-      final TestEntity message = objectMapper.readValue(payload, TestEntity.class);
+      final SensorData message = objectMapper.readValue(payload, SensorData.class);
       log.info("Received object: {}", message);
 
-      testRepository.save(message);
+      sensorDataRepository.save(message);
       wsHandler.broadcast(message);
 
     } catch (final Exception e) {

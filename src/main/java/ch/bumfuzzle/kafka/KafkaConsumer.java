@@ -24,7 +24,7 @@ public class KafkaConsumer {
   }
 
   @KafkaListener(
-      topics = "#{@kafkaTopicsFetcher.topics}",
+      topics = "${app.kafka.topic:test-topic}",
       containerFactory = "kafkaListenerContainerFactory"
   )
   public void listen(final byte[] payload) {

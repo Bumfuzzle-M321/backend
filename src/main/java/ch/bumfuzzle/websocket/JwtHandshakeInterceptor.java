@@ -1,11 +1,14 @@
 package ch.bumfuzzle.websocket;
 
+import ch.bumfuzzle.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
@@ -20,6 +23,9 @@ import java.util.Map;
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
     private final JwtDecoder jwtDecoder;
+
+    @Autowired
+    private UserService  userService;
 
     public JwtHandshakeInterceptor(final JwtDecoder jwtDecoder) {
         this.jwtDecoder = jwtDecoder;
@@ -47,7 +53,8 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
             }
 
             try {
-                jwtDecoder.decode(token);
+                Jwt jwt = jwtDecoder.decode(token);
+                userService.createUserIfNotExists(jwt);
             } catch (final JwtException e) {
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
                 return false;

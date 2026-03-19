@@ -18,49 +18,49 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class KafkaWebsocketHandler extends TextWebSocketHandler {
 
-  private final Set<WebSocketSession> sessions =
-      ConcurrentHashMap.newKeySet();
+    private final Set<WebSocketSession> sessions =
+            ConcurrentHashMap.newKeySet();
 
-  @Override
-  public void afterConnectionEstablished(@NonNull final WebSocketSession session) {
-    log.info("WS Session with ID: {} started", session.getId());
-    sessions.add(session);
-  }
+    @Override
+    public void afterConnectionEstablished(@NonNull final WebSocketSession session) {
+        log.info("WS Session with ID: {} started", session.getId());
+        sessions.add(session);
+    }
 
-  @Override
-  public void afterConnectionClosed(
-      @NonNull final WebSocketSession session,
-      @NonNull final CloseStatus status
-  ) {
-    log.info("WS Session with ID: {} removed", session.getId());
-    sessions.remove(session);
-  }
+    @Override
+    public void afterConnectionClosed(
+            @NonNull final WebSocketSession session,
+            @NonNull final CloseStatus status
+    ) {
+        log.info("WS Session with ID: {} removed", session.getId());
+        sessions.remove(session);
+    }
 
-  public void broadcast(final SensorData payload) {
-    sessions.forEach(session -> {
-      try {
-        if (session.isOpen()) {
-          session.sendMessage(
-              new TextMessage(payload.toString())
-          );
-        }
-      } catch (IOException _) {
-        // ignore
-      }
-    });
-  }
+    public void broadcast(final SensorData payload) {
+        sessions.forEach(session -> {
+            try {
+                if (session.isOpen()) {
+                    session.sendMessage(
+                            new TextMessage(payload.toString())
+                    );
+                }
+            } catch (IOException e) {
+                // ignore
+            }
+        });
+    }
 
-  public void broadcastError(final String errorMessage) {
-    sessions.forEach(session -> {
-      try {
-        if (session.isOpen()) {
-          session.sendMessage(
-              new TextMessage(errorMessage)
-          );
-        }
-      } catch (IOException _) {
-        // ignore
-      }
-    });
-  }
+    public void broadcastError(final String errorMessage) {
+        sessions.forEach(session -> {
+            try {
+                if (session.isOpen()) {
+                    session.sendMessage(
+                            new TextMessage(errorMessage)
+                    );
+                }
+            } catch (IOException e) {
+                // ignore
+            }
+        });
+    }
 }

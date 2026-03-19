@@ -1,5 +1,7 @@
 package ch.bumfuzzle.websocket;
 
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -9,53 +11,58 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
 
+@Slf4j
 @Component
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
-  private final JwtDecoder jwtDecoder;
+    private final JwtDecoder jwtDecoder;
 
-  public JwtHandshakeInterceptor(final JwtDecoder jwtDecoder) {
-    this.jwtDecoder = jwtDecoder;
-  }
-
-  @Override
-  public boolean beforeHandshake(
-      final ServerHttpRequest request,
-      final ServerHttpResponse response,
-      final WebSocketHandler wsHandler,
-      final Map<String, Object> attributes
-  ) {
-    if (request instanceof final ServletServerHttpRequest servletRequest) {
-
-      final String token = servletRequest
-          .getServletRequest()
-          .getParameter("token");
-
-      if (token == null) {
-        response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        return false;
-      }
-
-      try {
-        jwtDecoder.decode(token);
-      } catch (final JwtException e) {
-        response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        return false;
-      }
+    public JwtHandshakeInterceptor(final JwtDecoder jwtDecoder) {
+        this.jwtDecoder = jwtDecoder;
     }
 
-    return true;
-  }
+    @Override
+    public boolean beforeHandshake(
+            final ServerHttpRequest request,
+            final ServerHttpResponse response,
+            final WebSocketHandler wsHandler,
+            final Map<String, Object> attributes
+    ) {
+        if (request instanceof final ServletServerHttpRequest servletRequest) {
 
-  @Override
-  public void afterHandshake(
-      final ServerHttpRequest request,
-      final ServerHttpResponse response,
-      final WebSocketHandler wsHandler,
-      final Exception exception
-  ) {
-  }
+            final HttpServletRequest httpRequest = servletRequest.getServletRequest();
+
+            String token = UriComponentsBuilder.fromUri(request.getURI())
+                    .build()
+                    .getQueryParams()
+                    .getFirst("token");
+
+            if (token == null) {
+                response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                return false;
+            }
+
+            try {
+                jwtDecoder.decode(token);
+            } catch (final JwtException e) {
+                response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public void afterHandshake(
+            final ServerHttpRequest request,
+            final ServerHttpResponse response,
+            final WebSocketHandler wsHandler,
+            final Exception exception
+    ) {
+    }
 }

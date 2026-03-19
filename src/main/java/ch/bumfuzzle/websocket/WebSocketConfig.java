@@ -22,8 +22,9 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
   @Override
   public void registerWebSocketHandlers(final WebSocketHandlerRegistry registry) {
-    registry.addHandler(handler, "/ws/kafka")
+    registry.addHandler(handler, "/websocket")
             .addInterceptors(jwtInterceptor)
-            .setAllowedOrigins("*");
+            .setAllowedOrigins("*")
+            .setAllowedOrigins("http://localhost:5173");
   }
 }

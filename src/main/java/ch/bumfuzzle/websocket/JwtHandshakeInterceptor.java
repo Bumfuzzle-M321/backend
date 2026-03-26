@@ -2,6 +2,7 @@ package ch.bumfuzzle.websocket;
 
 import ch.bumfuzzle.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,16 +21,11 @@ import java.util.Map;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
     private final JwtDecoder jwtDecoder;
-
-    @Autowired
-    private UserService  userService;
-
-    public JwtHandshakeInterceptor(final JwtDecoder jwtDecoder) {
-        this.jwtDecoder = jwtDecoder;
-    }
+    private final UserService userService;
 
     @Override
     public boolean beforeHandshake(
@@ -54,6 +50,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
             try {
                 Jwt jwt = jwtDecoder.decode(token);
+                attributes.put("sub", jwt.getSubject());
                 userService.createUserIfNotExists(jwt);
             } catch (final JwtException e) {
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);

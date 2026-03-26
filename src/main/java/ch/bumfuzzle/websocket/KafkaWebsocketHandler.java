@@ -1,6 +1,5 @@
 package ch.bumfuzzle.websocket;
 
-import ch.bumfuzzle.entity.Device;
 import ch.bumfuzzle.entity.SensorData;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -37,17 +36,16 @@ public class KafkaWebsocketHandler extends TextWebSocketHandler {
     }
 
     public void broadcast(final SensorData payload) {
-        sessions.forEach(session -> {
-            try {
-                if (session.isOpen()) {
-                    session.sendMessage(
-                            new TextMessage(payload.toString())
-                    );
-                }
-            } catch (IOException e) {
-                // ignore
-            }
-        });
+        try {
+            sessions.stream()
+                    .filter(session -> session.getAttributes().get("sub").equals(payload.getDevice().getUser().getKeycloakId()))
+                    .filter(WebSocketSession::isOpen)
+                    .toList()
+                    .getFirst()
+                    .sendMessage(new TextMessage(payload.toString()));
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     public void broadcastError(final String errorMessage) {

@@ -24,13 +24,4 @@ public class UserService {
             userProducer.send(user);
         }
     }
-
-    public Runnable saveNewUser(User user) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                userRepository.save(user);
-            }
-        };
-    }
 }

@@ -35,9 +35,6 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
             final Map<String, Object> attributes
     ) {
         if (request instanceof final ServletServerHttpRequest servletRequest) {
-
-            final HttpServletRequest httpRequest = servletRequest.getServletRequest();
-
             String token = UriComponentsBuilder.fromUri(request.getURI())
                     .build()
                     .getQueryParams()

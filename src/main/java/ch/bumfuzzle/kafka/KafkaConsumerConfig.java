@@ -8,15 +8,14 @@ import org.springframework.kafka.core.ConsumerFactory;
 @Configuration
 public class KafkaConsumerConfig {
 
-  @Bean
-  public ConcurrentKafkaListenerContainerFactory<String, byte[]>
-  kafkaListenerContainerFactory(
-      ConsumerFactory<String, byte[]> consumerFactory) {
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<Object, Object> kafkaListenerContainerFactory(ConsumerFactory<Object, Object> consumerFactory) {
+        ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
 
-    ConcurrentKafkaListenerContainerFactory<String, byte[]> factory =
-        new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory);
 
-    factory.setConsumerFactory(consumerFactory);
-    return factory;
-  }
+        // enable batch consumption
+        factory.setBatchListener(true);
+        return factory;
+    }
 }

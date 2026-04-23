@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -28,4 +29,7 @@ public class Device {
 
   @ManyToOne()
   private User user;
+
+  @OneToMany()
+  private List<SensorData> sensorData;
 }

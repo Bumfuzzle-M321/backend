@@ -27,7 +27,7 @@ public class DeviceController {
     @GetMapping("/all")
     public List<Device> findAll(@AuthenticationPrincipal Jwt jwt) {
         User user = userRepository.findByKeycloakId(jwt.getSubject()).orElse(null);
-        if (user == null) {return List.of();}
+        if (user == null) return List.of();
         return deviceRepository.findAllByUser(user).orElse(List.of());
     }
 }

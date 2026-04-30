@@ -31,4 +31,14 @@ public class SensorData {
 
     @ManyToOne()
     private Device device;
+
+    @Override
+    public String toString() {
+        return "SensorData{" +
+                "id=" + id +
+                ", cpu_temp=" + cpu_temp +
+                ", timestamp=" + timestamp +
+                ", device=" + device +
+                '}';
+    }
 }

@@ -20,7 +20,7 @@ public class SensorDataConsumer {
   private final SensorDataService sensorDataService;
 
   @KafkaListener(
-      topics = "${app.kafka.topic:test-topic}",
+      topics = "${app.kafka.topic.sensorData:test-topic}",
       containerFactory = "kafkaListenerContainerFactory"
   )
   public void listen(final List<ConsumerRecord<SensorDataKey, SensorData>> payload) {

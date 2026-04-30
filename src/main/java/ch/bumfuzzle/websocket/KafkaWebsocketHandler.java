@@ -43,8 +43,10 @@ public class KafkaWebsocketHandler extends TextWebSocketHandler {
                     .toList()
                     .getFirst()
                     .sendMessage(new TextMessage(payload.toString()));
+            log.info("Data received and processed: {}", payload);
         } catch (Exception e) {
-            // ignore
+            broadcastError("Something went wrong: " +  e.getMessage());
+            log.error(e.toString());
         }
     }
 
@@ -57,7 +59,7 @@ public class KafkaWebsocketHandler extends TextWebSocketHandler {
                     );
                 }
             } catch (IOException e) {
-                // ignore
+                log.error(e.toString());
             }
         });
     }

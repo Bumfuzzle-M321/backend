@@ -23,8 +23,8 @@ public class SensorData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Long cpu_temp;
+    @Column(columnDefinition = "JSON")
+    private String data;
 
     @Column(nullable = false)
     private Instant timestamp;
@@ -36,7 +36,7 @@ public class SensorData {
     public String toString() {
         return "SensorData{" +
                 "id=" + id +
-                ", cpu_temp=" + cpu_temp +
+                ", data=" + data +
                 ", timestamp=" + timestamp +
                 ", device=" + device +
                 '}';

@@ -1,5 +1,6 @@
 package ch.bumfuzzle.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,12 +25,10 @@ public class Device {
   @Column(nullable = false, columnDefinition = "TEXT", length = 15)
   private String name;
 
-  @Column(columnDefinition = "TEXT")
+  @Column(columnDefinition = "TEXT", length = 50)
   private String description;
 
   @ManyToOne()
+  @JsonIgnore
   private User user;
-
-  @OneToMany()
-  private List<SensorData> sensorData;
 }

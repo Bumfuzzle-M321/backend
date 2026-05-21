@@ -18,4 +18,4 @@ WORKDIR /backend
 
 COPY --from=build /backend/target/*.jar bumfuzzle-backend.jar
 
-CMD ["java","-jar","app.jar"]
+CMD ["java","-jar","bumfuzzle-backend.jar"]

@@ -33,7 +33,14 @@ public class SensorDataService {
         Device device = deviceRepository.getReferenceById(key.deviceId());
 
         SensorData sensorData = new SensorData();
-        sensorData.setData(record.value());
+
+        try {
+            JsonNode dataNode = objectMapper.readTree(record.value());
+            sensorData.setData(dataNode);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid JSON payload", e);
+        }
+
         sensorData.setTimestamp(key.timestamp());
         sensorData.setDevice(device);
 

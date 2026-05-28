@@ -2,12 +2,14 @@ package ch.bumfuzzle.service;
 
 import ch.bumfuzzle.entity.Device;
 import ch.bumfuzzle.entity.SensorData;
+import ch.bumfuzzle.entity.SensorDataKey;
 import ch.bumfuzzle.repository.DeviceRepository;
 import ch.bumfuzzle.repository.SensorDataRepository;
 import ch.bumfuzzle.websocket.KafkaWebsocketHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SensorDataService {
 
     private final KafkaWebsocketHandler wsHandler;
@@ -30,7 +33,7 @@ public class SensorDataService {
 
     private void handleRecord(ConsumerRecord<String, String> record) {
         SensorDataKey key = parseKey(record.key());
-        Device device = deviceRepository.getReferenceById(key.deviceId());
+        Device device = deviceRepository.getReferenceById(key.getDeviceId());
 
         SensorData sensorData = new SensorData();
 
@@ -41,9 +44,10 @@ public class SensorDataService {
             throw new IllegalArgumentException("Invalid JSON payload", e);
         }
 
-        sensorData.setTimestamp(key.timestamp());
+        sensorData.setTimestamp(key.getTimestamp());
         sensorData.setDevice(device);
 
+        log.info("Sensordata: {} was read", sensorData);
         sensorDataRepository.save(sensorData);
         wsHandler.broadcast(sensorData);
     }
@@ -58,8 +62,5 @@ public class SensorDataService {
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid sensor data Kafka key: " + key, e);
         }
-    }
-
-    private record SensorDataKey(Instant timestamp, UUID deviceId) {
     }
 }

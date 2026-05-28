@@ -1,7 +1,5 @@
 package ch.bumfuzzle.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,7 +10,6 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(name = "sensor_data")
